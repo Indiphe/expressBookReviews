@@ -33,24 +33,32 @@ const authenticateJWT = (req, res, next) => {
   });
 };
 
-// Task 7: Login Route - Check credentials and return JWT
 regd_users.post("/login", (req, res) => {
   const { username, password } = req.body;
 
+  // Check if both username and password are provided
   if (!username || !password) {
     return res.status(400).json({ message: "Username and password are required" });
   }
 
+  // Validate the user with the provided username and password
   const user = users.find(user => user.username === username && user.password === password);
 
   if (!user) {
     return res.status(401).json({ message: "Invalid username or password" });
   }
 
+  // Generate a JWT token and store it in the session
   const accessToken = jwt.sign({ username }, "access", { expiresIn: "1h" });
+
+  // Store the token in the session
+  req.session.authorization = { accessToken };
+
+  console.log("User logged in:", username);  // Debug log to check if the route is hit
 
   return res.status(200).json({ message: "Login successful", token: accessToken });
 });
+
 
 // Task 8: Add/Modify Book Review Route - Allows users to post reviews
 regd_users.put("/auth/review/:isbn", authenticateJWT, (req, res) => {
