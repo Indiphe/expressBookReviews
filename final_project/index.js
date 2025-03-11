@@ -29,6 +29,13 @@ if (req.session.authorization) {
 }
 });
 
+
+app.listen(PORT, () => {
+    console.log(`Server running on http://localhost:${PORT}`);
+}).on("error", (err) => {
+    console.error("Server error:", err);
+});
+
 const PORT =5000;
 
 app.use("/customer", customer_routes);
