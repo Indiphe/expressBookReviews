@@ -1,78 +1,95 @@
 const express = require('express');
-let books = require("./booksdb.js"); // Assuming this holds your book data
-let isValid = require("./auth_users.js").isValid; // Assuming this is for user validation
-let users = require("./auth_users.js").users; // Assuming this holds users data
+let books = require("./booksdb.js");
+let isValid = require("./auth_users.js").isValid;
+let users = require("./auth_users.js").users;
 const public_users = express.Router();
-
-// Register a new user (yet to be implemented)
-public_users.post("/register", (req, res) => {
-  // Implement user registration logic here
-  const username = req.body.username;
-  const password = req.body.password;
-  if (username && password) {
-    if (!doesExist(username)) {
-      users.push({ "username": username, "password": password });
-      return res.status(200).json({ message: "User successfully registered. Now you can login" });
-    } else {
-      return res.status(404).json({ message: "User already exists!" });
-    }
-  }
-  return res.status(404).json({ message: "Unable to register user." });
+ 
+ 
+public_users.post("/register", (req,res) => {
+  //Write your code here
+  return res.status(300).json({message: "Yet to be implemented"});
 });
-
-
+ 
 // Get the book list available in the shop
-public_users.get('/', function (req, res) {
-  // Send back the list of books as a JSON string
-  res.json(books); // Simplified response
+public_users.get('/',function (req, res) {
+  //Write your code here
+  return res.send(JSON.stringify(books,null,4));
 });
-
+ 
 // Get book details based on ISBN
 public_users.get('/isbn/:isbn', function (req, res) {
+  // Retrieve the ISBN from request parameters and convert to number
   const isbn = req.params.isbn;
-  const book = books.find(b => b.isbn === isbn);
-
+ 
+  // Find the book by ISBN
+  const book = books[isbn];
+ 
   if (book) {
-    res.json(book); // Send back the book with the matching ISBN
+      return res.send(JSON.stringify(book, null, 2)); // Send the book details
   } else {
-    res.status(404).json({ message: "Book not found with the given ISBN" });
+      return res.status(404).json({ message: "Book not found" }); // Handle case where book is not found
   }
+ 
 });
-
+ 
 // Get book details based on author
-public_users.get('/author/:author', function (req, res) {
+public_users.get('/author/:author',function (req, res) {
+  //Write your code here
+  // Extract the author parameter from the request URL
   const author = req.params.author;
-  const booksByAuthor = books.filter(b => b.author === author);
-
-  if (booksByAuthor.length > 0) {
-    res.json(booksByAuthor); // Return books by the author
+ 
+  // Create an array of books by matching author name
+  let filtered_books = [];
+ 
+  // Iterate through the books object and find books with the matching author
+  for (let key in books) {
+    if (books[key].author.toLowerCase() === author.toLowerCase()) {
+      filtered_books.push(books[key]); // Add matching book to the array
+    }
+  }
+ 
+  // If no books were found by the given author, return a 404 status
+  if (filtered_books.length > 0) {
+    return res.status(200).json(filtered_books); // Send the filtered books
   } else {
-    res.status(404).json({ message: "No books found by this author" });
+    return res.status(404).json({ message: "No books found by this author" }); // Handle case where no books are found
   }
 });
-
+ 
 // Get all books based on title
-public_users.get('/title/:title', function (req, res) {
+public_users.get('/title/:title',function (req, res) {
+  //Write your code here
+  // Extract the title parameter from the request URL
   const title = req.params.title;
-  const booksByTitle = books.filter(b => b.title.toLowerCase().includes(title.toLowerCase()));
-
-  if (booksByTitle.length > 0) {
-    res.json(booksByTitle); // Return books that match the title
-  } else {
-    res.status(404).json({ message: "No books found with this title" });
+ 
+  // Create an array of books by matching title
+  let filtered_books = [];
+ 
+  // Iterate through the books object and find books with the matching title
+  for (let key in books) {
+    if (books[key].title.toLowerCase() === title.toLowerCase()) {
+      filtered_books.push(books[key]); // Add matching book to the array
+    }
   }
-});
-
-// Get book reviews based on ISBN
-public_users.get('/review/:isbn', function (req, res) {
-  const isbn = req.params.isbn;
-  const book = books.find(b => b.isbn === isbn);
-
-  if (book && book.reviews) {
-    res.json(book.reviews); // Return reviews for the book
+ 
+  // If no books were found by the given author, return a 404 status
+  if (filtered_books.length > 0) {
+    return res.status(200).json(filtered_books); // Send the filtered books
   } else {
-    res.status(404).json({ message: "Reviews not found for this book" });
+    return res.status(404).json({ message: "No books found by this title" }); // Handle case where no books are found
   }
+ 
 });
-
+ 
+//  Get book review
+public_users.get('/review/:isbn',function (req, res) {
+  //Write your code here
+  return res.status(300).json({message: "Yet to be implemented"});
+});
+ 
 module.exports.general = public_users;
+ 
+ 
+ 
+ 
+ 
